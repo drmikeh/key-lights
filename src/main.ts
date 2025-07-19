@@ -1,18 +1,24 @@
-import { on, off } from './lightService';
+import { on, off, status } from './lightService';
+import { LightNames } from './types';
 
-/** Customize for yourself */
-export async function main(scene = 'on') {
-  const key = '192.168.1.110';
-  const fill = '192.168.1.117';
-  const temperature = 344;
-
-  if (scene == 'on') {
-    await on(key, { brightness: 20, temperature });
-    await on(fill, { brightness: 15, temperature });
-  } else if (scene == 'off') {
-    await off(key);
-    await off(fill);
+export async function main(command: string | undefined): Promise<void> {
+  if (!command) {
+    console.error('No command provided. Use "on", "off", "status", or "help".');
+  } else if (command === 'help') {
+    console.log('Available commands:');
+    console.log('  on - Turn on the lights');
+    console.log('  off - Turn off the lights');
+    console.log('  status - Get the status of the lights');
+  } else if (command == 'on') {
+    await on(LightNames.Main, { brightness: 50, temperature: 241 });
+    await on(LightNames.Fill, { brightness: 20, temperature: 333 });
+  } else if (command == 'off') {
+    await off(LightNames.Main);
+    await off(LightNames.Fill);
+  } else if (command == 'status') {
+    await status(LightNames.Main);
+    await status(LightNames.Fill);
   } else {
-    console.log('UNKNOWN SCENE:', scene);
+    console.error('UNKNOWN COMMAND:', command);
   }
 }
